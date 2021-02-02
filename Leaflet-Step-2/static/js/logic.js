@@ -46,7 +46,7 @@ let baseMaps = {
 };
 
 // Add base layers to map
-L.control.layers(baseMaps,{},{
+let myLayersControl  = L.control.layers(baseMaps,{},{
     collapsed: false
 }).addTo(myMap);
 
@@ -116,8 +116,8 @@ d3.json(endpoint).then(data => {
         },
         onEachFeature: onEachFeature //this calls the function to bind Popups on each feature
     }).addTo(myMap)
-    // Add markers to my map
-    // markers.addTo(myMap)
+    // Add geojson to my layers control
+    myLayersControl.addOverlay(geojson,"Earthquakes")
 
     // Set up the legend
     let legend = L.control({ 
@@ -129,7 +129,7 @@ d3.json(endpoint).then(data => {
         let labels = [];
 
         // Add min & max
-        let legendInfo = "<h1>Magnitudes</h1>" +
+        let legendInfo = "<p>Magnitudes</p>" +
         "<div class=\"labels\">" +
             "<div class=\"min\">" + limits[0] + "</div>" +
             "<div class=\"max\">" + limits[limits.length - 1] + "</div>" +
@@ -156,21 +156,25 @@ d3.json(endpoint).then(data => {
 })
 
 
-
+// her we read the second dataset for the tectonic plates
 d3.json(plates).then(geojsonFeature=>{
 
-    console.log(geojsonFeature)
+    // console.log(geojsonFeature)
 
     let myStyle = {
         "color": "#ff7800",
         "weight": 1,
-        "opacity": 1
+        "opacity": 1,
+        "fillOpacity": 0
     };
 
-    L.geoJSON(geojsonFeature,{
+    // Read the features of the geoJSON and put them in the map
+    let tectonics = L.geoJSON(geojsonFeature,{
         style: myStyle
     }).addTo(myMap)
 
+    // Add them to the layers control
+    myLayersControl.addOverlay(tectonics,"Tectonic Plates")
 })
 .catch(e=>{
     console.log(e)
